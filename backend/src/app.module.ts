@@ -4,6 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RandomNumbersModule } from './random-numbers/random-numbers.module';
+import { CountriesModule } from './countries/countries.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { RandomNumbersModule } from './random-numbers/random-numbers.module';
       autoSchemaFile: 'src/schema.gql',
     }),
     RandomNumbersModule,
+    CountriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
