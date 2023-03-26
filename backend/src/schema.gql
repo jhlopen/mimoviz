@@ -1,0 +1,22 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type RandomNumber {
+  """Number index"""
+  index: Int!
+
+  """Number value"""
+  value: Float!
+}
+
+type Query {
+  """The maximum number of random numbers per generation."""
+  maxCount: Int!
+
+  """The maximum possible value of a random number."""
+  maxValue: Float!
+
+  """Generate a sequence of random numbers between 0 and 10000."""
+  randomNumbers(count: Int!): [RandomNumber!]!
+}
