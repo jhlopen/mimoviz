@@ -7,6 +7,7 @@ import {
   NavItem,
   NavLink,
 } from "react-bootstrap";
+import Bar from "./Bar";
 import Line from "./Line";
 import Stream from "./Stream";
 
@@ -59,7 +60,34 @@ export default function VisualizationTabs() {
               leftAxisLegend="Y"
             />
           </TabPane>
-          <TabPane eventKey="bar"></TabPane>
+          <TabPane eventKey="bar" style={{ height: "500px" }}>
+            <Bar
+              data={[
+                {
+                  x: 0,
+                  a: 1,
+                  b: 1,
+                  c: 3,
+                },
+                {
+                  x: 1,
+                  a: 1,
+                  b: 2,
+                  c: 2,
+                },
+                {
+                  x: 2,
+                  a: 1,
+                  b: 3,
+                  c: 1,
+                },
+              ]}
+              keys={["a", "b", "c"]}
+              indexBy="x"
+              bottomAxisLegend="X"
+              leftAxisLegend="Y"
+            />
+          </TabPane>
         </TabContent>
       </Row>
       <Row>
