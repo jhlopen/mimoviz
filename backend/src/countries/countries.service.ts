@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCountryInput } from './dto/create-country.input';
-import { UpdateCountryInput } from './dto/update-country.input';
+import { Model } from 'mongoose';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Country, CountryDocument } from './entities/country.entity';
+import { CountryInput } from './dto/country.input';
 
 @Injectable()
 export class CountriesService {
-  create(createCountryInput: CreateCountryInput) {
-    return 'This action adds a new country';
+  constructor(
+    @InjectModel(Country.name)
+    private readonly countryModel: Model<CountryDocument>,
+  ) {}
+
+  async create(createCountryInput: CountryInput): Promise<Country> {
+    const country = await this.countryModel
+      .findOneAndUpdate(
+        { code: createCountryInput.code },
+        { $set: createCountryInput },
+        { new: true, upsert: true },
+      )
+      .exec();
+    return country;
   }
 
-  findAll() {
-    return `This action returns all countries`;
+  async findAll(): Promise<Country[]> {
+    return this.countryModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} country`;
+  async findOne(code: string): Promise<Country> {
+    const country = await this.countryModel.findOne({ code: code }).exec();
+    if (!country) {
+      throw new NotFoundException(`Country '${code}' not found`);
+    }
+    return country;
   }
 
-  update(id: number, updateCountryInput: UpdateCountryInput) {
-    return `This action updates a #${id} country`;
+  async update(
+    code: string,
+    updateCountryInput: CountryInput,
+  ): Promise<Country> {
+    const country = await this.countryModel
+      .findOneAndUpdate(
+        { code: code },
+        { $set: updateCountryInput },
+        { new: true },
+      )
+      .exec();
+    if (!country) {
+      throw new NotFoundException(`Country '${code}' not found`);
+    }
+    return country;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} country`;
+  async remove(code: string): Promise<Country> {
+    const country = await this.countryModel
+      .findOneAndDelete({ code: code })
+      .exec();
+    if (!country) {
+      throw new NotFoundException(`Country '${code}' not found`);
+    }
+    return country;
   }
 }

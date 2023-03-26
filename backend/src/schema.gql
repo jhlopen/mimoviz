@@ -10,6 +10,28 @@ type RandomNumber {
   value: Float!
 }
 
+type Population {
+  """The year of the population data"""
+  year: String!
+
+  """The total population"""
+  count: Int!
+}
+
+type Country {
+  """Country code (ISO 3166-1 alpha-2)"""
+  code: String!
+
+  """Country name"""
+  name: String!
+
+  """Country emoji"""
+  emoji: String!
+
+  """Country population by year"""
+  populations: [Population!]!
+}
+
 type Query {
   """The maximum number of random numbers per generation."""
   maxCount: Int!
@@ -19,4 +41,34 @@ type Query {
 
   """Generate a sequence of random numbers between 0 and 10000."""
   randomNumbers(count: Int!): [RandomNumber!]!
+  countries: [Country!]!
+  country(code: String!): Country!
+}
+
+type Mutation {
+  createCountry(createCountryInput: CountryInput!): Country!
+  updateCountry(updateCountryInput: CountryInput!): Country!
+  removeCountry(code: String!): Country!
+}
+
+input CountryInput {
+  """Country code (ISO 3166-1 alpha-2)"""
+  code: String!
+
+  """Country name"""
+  name: String!
+
+  """Country emoji"""
+  emoji: String!
+
+  """Country population by year"""
+  populations: [PopulationInput!]!
+}
+
+input PopulationInput {
+  """The year of the population data"""
+  year: String!
+
+  """The total population"""
+  count: Int!
 }
