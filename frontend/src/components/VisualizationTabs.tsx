@@ -1,108 +1,78 @@
-import {
-  TabContainer,
-  Row,
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-} from "react-bootstrap";
-import Bar from "./Bar";
-import Line from "./Line";
-import Stream from "./Stream";
+import Tab from "react-bootstrap/Tab";
+import Row from "react-bootstrap/Row";
+import Nav from "react-bootstrap/Nav";
+import Stream, { StreamDataPropsWithAxisLegends } from "./Stream";
+import Line, { LineSvgPropsWithAxisLegends } from "./Line";
+import Bar, { BarDataPropsWithAxisLegends } from "./Bar";
 
-export default function VisualizationTabs() {
+interface VisualizationTabsProps {
+  activeKey?: string;
+  setActiveKey?: (activeKey: string) => void;
+  streamProps: StreamDataPropsWithAxisLegends;
+  lineProps: LineSvgPropsWithAxisLegends;
+  barProps: BarDataPropsWithAxisLegends;
+}
+
+export default function VisualizationTabs({
+  activeKey,
+  setActiveKey,
+  streamProps,
+  lineProps,
+  barProps,
+}: VisualizationTabsProps) {
   return (
-    <TabContainer id="visualization-tabs" defaultActiveKey="stream">
+    <Tab.Container
+      id="visualization-tabs"
+      defaultActiveKey="stream"
+      activeKey={activeKey}
+    >
       <Row>
-        <TabContent>
-          <TabPane eventKey="stream" style={{ height: "500px" }}>
-            <Stream
-              data={[
-                { a: 1, b: 1, c: 1 },
-                { a: 1, b: 2, c: 3 },
-                { a: 3, b: 2, c: 1 },
-              ]}
-              keys={["a", "b", "c"]}
-              bottomAxisLegend="X"
-              leftAxisLegend="Y"
-            />
-          </TabPane>
-          <TabPane eventKey="line" style={{ height: "500px" }}>
-            <Line
-              data={[
-                {
-                  id: "a",
-                  data: [
-                    { x: 0, y: 1 },
-                    { x: 1, y: 1 },
-                    { x: 2, y: 3 },
-                  ],
-                },
-                {
-                  id: "b",
-                  data: [
-                    { x: 0, y: 1 },
-                    { x: 1, y: 2 },
-                    { x: 2, y: 2 },
-                  ],
-                },
-                {
-                  id: "c",
-                  data: [
-                    { x: 0, y: 1 },
-                    { x: 1, y: 3 },
-                    { x: 2, y: 1 },
-                  ],
-                },
-              ]}
-              bottomAxisLegend="X"
-              leftAxisLegend="Y"
-            />
-          </TabPane>
-          <TabPane eventKey="bar" style={{ height: "500px" }}>
-            <Bar
-              data={[
-                {
-                  x: 0,
-                  a: 1,
-                  b: 1,
-                  c: 3,
-                },
-                {
-                  x: 1,
-                  a: 1,
-                  b: 2,
-                  c: 2,
-                },
-                {
-                  x: 2,
-                  a: 1,
-                  b: 3,
-                  c: 1,
-                },
-              ]}
-              keys={["a", "b", "c"]}
-              indexBy="x"
-              bottomAxisLegend="X"
-              leftAxisLegend="Y"
-            />
-          </TabPane>
-        </TabContent>
+        <Tab.Content>
+          <Tab.Pane
+            id="stream-tab-pane"
+            eventKey="stream"
+            style={{ height: "500px" }}
+          >
+            <Stream {...streamProps} />
+          </Tab.Pane>
+          <Tab.Pane
+            id="line-tab-pane"
+            eventKey="line"
+            style={{ height: "500px" }}
+          >
+            <Line {...lineProps} />
+          </Tab.Pane>
+          <Tab.Pane
+            id="bar-tab-pane"
+            eventKey="bar"
+            style={{ height: "500px" }}
+          >
+            <Bar {...barProps} />
+          </Tab.Pane>
+        </Tab.Content>
       </Row>
       <Row>
-        <Nav variant="pills">
-          <NavItem>
-            <NavLink eventKey="stream">Stream</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink eventKey="line">Line</NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink eventKey="bar">Bar</NavLink>
-          </NavItem>
+        <Nav
+          variant="pills"
+          onSelect={(eventKey) => eventKey && setActiveKey?.(eventKey)}
+        >
+          <Nav.Item>
+            <Nav.Link id="stream-nav-link" eventKey="stream">
+              Stream
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link id="line-nav-link" eventKey="line">
+              Line
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link id="bar-nav-link" eventKey="bar">
+              Bar
+            </Nav.Link>
+          </Nav.Item>
         </Nav>
       </Row>
-    </TabContainer>
+    </Tab.Container>
   );
 }
