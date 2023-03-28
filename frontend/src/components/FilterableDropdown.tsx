@@ -68,7 +68,9 @@ const CustomMenu = forwardRef(
             (child) =>
               !value ||
               (isValidElement(child) &&
-                child.props.children.toLowerCase().startsWith(value))
+                child.props.children
+                  .toLowerCase()
+                  .includes(value.toLowerCase()))
           )}
         </ul>
       </div>
