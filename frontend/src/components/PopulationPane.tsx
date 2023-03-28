@@ -50,9 +50,11 @@ export default function PopulationPane() {
     onCompleted: (data) => {
       const countries: CountryBase[] = data?.countries;
       if (countries && countries.length > 0) {
+        const initialCountry =
+          countries[Math.floor(Math.random() * countries.length)];
         handleCountrySelection(
-          countries[0].code,
-          countries[0].name + " " + countries[0].emoji
+          initialCountry.code,
+          initialCountry.name + " " + initialCountry.emoji
         );
       }
     },
