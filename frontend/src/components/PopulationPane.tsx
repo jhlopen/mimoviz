@@ -2,6 +2,7 @@ import { useState } from "react";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import CloseButton from "react-bootstrap/CloseButton";
 import Badge from "react-bootstrap/Badge";
 import Stack from "react-bootstrap/Stack";
 import Spinner from "react-bootstrap/Spinner";
@@ -59,7 +60,7 @@ export default function PopulationPane() {
   const [getCountryPopulations, countryPopulationsQueryResult] = useLazyQuery(
     GET_COUNTRY_POPULATIONS
   );
-  const [selectedCountries, setSelectedCountries] = useState<string[]>([]);
+  const [selectedCountries, setSelectedCountries] = useState<CountryBase[]>([]);
   const [streamProps, setStreamProps] =
     useState<StreamDataPropsWithAxisLegends>({
       data: [],
@@ -92,9 +93,10 @@ export default function PopulationPane() {
 
   function handleCountrySelection(key: string, value: string) {
     if (!streamProps.keys.includes(key)) {
+      const countryName = value.slice(0, -5);
       setSelectedCountries((selectedCountries) => [
         ...selectedCountries,
-        value,
+        { code: key, name: countryName, emoji: value.slice(-4) },
       ]);
       getCountryPopulations({
         variables: { code: key },
@@ -123,21 +125,58 @@ export default function PopulationPane() {
           // Process data for bar chart
           if (barProps.data.length > 0) {
             for (let index = 0; index < barProps.data.length; index++) {
-              barProps.data[index][value] = populations[index].count;
+              barProps.data[index][countryName] = populations[index].count;
             }
           } else {
             barProps.data = populations.map((element) => ({
               year: element.year,
-              [value]: element.count,
+              [countryName]: element.count,
             }));
           }
 
-          barProps.keys?.push(value);
+          barProps.keys?.push(countryName);
           streamProps.keys.push(key);
         },
         onError: (error) => console.log(error),
       });
     }
+  }
+
+  function removeCountry(country: CountryBase) {
+    setStreamProps((streamProps) => {
+      streamProps.keys = streamProps.keys.filter(
+        (streamKey) => streamKey != country.code
+      );
+      if (streamProps.keys.length) {
+        streamProps.data.forEach((element) => delete element[country.code]);
+      } else {
+        streamProps.data = [];
+      }
+      return streamProps;
+    });
+
+    setLineProps((lineProps) => {
+      lineProps.data = lineProps.data.filter(
+        (serie) => serie.id != country.name
+      );
+      return lineProps;
+    });
+
+    setBarProps((barProps) => {
+      barProps.keys = barProps.keys?.filter(
+        (streamKey) => streamKey != country.name
+      );
+      if (barProps.keys?.length) {
+        barProps.data.forEach((element) => delete element[country.name]);
+      } else {
+        barProps.data = [];
+      }
+      return barProps;
+    });
+
+    setSelectedCountries((selectedCountries) =>
+      selectedCountries.filter((selectedCountry) => selectedCountry != country)
+    );
   }
 
   return (
@@ -166,8 +205,15 @@ export default function PopulationPane() {
             }}
           >
             {selectedCountries?.map((element) => (
-              <Badge key={element} bg="secondary">
-                {element}
+              <Badge key={element.code} bg="secondary">
+                <div>
+                  {element.name + " " + element.emoji}
+                  <CloseButton
+                    className="ms-1"
+                    variant="white"
+                    onClick={() => removeCountry(element)}
+                  />
+                </div>
               </Badge>
             ))}
           </Stack>
