@@ -4,6 +4,9 @@ import Nav from "react-bootstrap/Nav";
 import Stream, { StreamDataPropsWithAxisLegends } from "./Stream";
 import Line, { LineSvgPropsWithAxisLegends } from "./Line";
 import Bar, { BarDataPropsWithAxisLegends } from "./Bar";
+import { ReactComponent as StreamChartIcon } from "../assets/trending-up.svg";
+import { ReactComponent as LineChartIcon } from "../assets/activity.svg";
+import { ReactComponent as BarChartIcon } from "../assets/bar-chart-2.svg";
 
 interface VisualizationTabsProps {
   activeKey?: string;
@@ -58,17 +61,17 @@ export default function VisualizationTabs({
         >
           <Nav.Item>
             <Nav.Link id="stream-nav-link" eventKey="stream">
-              Stream
+              <StreamChartIcon /> Stream
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link id="line-nav-link" eventKey="line">
-              Line
+              <LineChartIcon /> Line
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
             <Nav.Link id="bar-nav-link" eventKey="bar">
-              Bar
+              <BarChartIcon /> Bar
             </Nav.Link>
           </Nav.Item>
         </Nav>
