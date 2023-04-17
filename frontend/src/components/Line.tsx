@@ -17,7 +17,7 @@ export default function Line(props: LineSvgPropsWithAxisLegends) {
           type: "linear",
           min: "auto",
           max: "auto",
-          stacked: true,
+          stacked: false,
           reverse: false,
         }}
         yFormat=" >-.2f"
