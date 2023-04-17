@@ -1,0 +1,19 @@
+.population {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.population .container {
+  max-width: none;
+}
+
+.population .hstack {
+  display: flex;
+  justify-content: left;
+  flex-flow: row wrap;
+}
+
+.population .hstack .badge {
+  margin: 2px;
+}

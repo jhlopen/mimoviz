@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useQuery, useLazyQuery, gql } from "@apollo/client";
+import { useOutletContext } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import VisualizationTabs from "./VisualizationTabs";
-import { StreamDataPropsWithAxisLegends } from "./Stream";
-import { LineSvgPropsWithAxisLegends } from "./Line";
-import { BarDataPropsWithAxisLegends } from "./Bar";
+import { useQuery, useLazyQuery, gql } from "@apollo/client";
+import VisualizationTabs from "../components/VisualizationTabs";
+import { StreamDataPropsWithAxisLegends } from "../components/Stream";
+import { LineSvgPropsWithAxisLegends } from "../components/Line";
+import { BarDataPropsWithAxisLegends } from "../components/Bar";
+import "./RandomNumber.css";
 
 const GET_RANDOM_NUMBERS = gql`
   query RANDOM_NUMBERS($count: Int!) {
@@ -15,34 +16,46 @@ const GET_RANDOM_NUMBERS = gql`
   }
 `;
 
-export default function RandomNumberPane() {
+export type RandomNumberContext = {
+  rollCount: number;
+  setRollCount: React.Dispatch<React.SetStateAction<number>>;
+  activeRandomNumberVisualization: string;
+  setActiveRandomNumberVisualization: React.Dispatch<
+    React.SetStateAction<string>
+  >;
+  randomNumberStreamProps: StreamDataPropsWithAxisLegends;
+  setRandomNumberStreamProps: React.Dispatch<
+    React.SetStateAction<StreamDataPropsWithAxisLegends>
+  >;
+  randomNumberLineProps: LineSvgPropsWithAxisLegends;
+  setRandomNumberLineProps: React.Dispatch<
+    React.SetStateAction<LineSvgPropsWithAxisLegends>
+  >;
+  randomNumberBarProps: BarDataPropsWithAxisLegends;
+  setRandomNumberBarProps: React.Dispatch<
+    React.SetStateAction<BarDataPropsWithAxisLegends>
+  >;
+};
+
+function RandomNumber() {
+  const {
+    rollCount,
+    setRollCount,
+    activeRandomNumberVisualization: activeVisualization,
+    setActiveRandomNumberVisualization: setActiveVisualization,
+    randomNumberStreamProps: streamProps,
+    setRandomNumberStreamProps: setStreamProps,
+    randomNumberLineProps: lineProps,
+    setRandomNumberLineProps: setLineProps,
+    randomNumberBarProps: barProps,
+    setRandomNumberBarProps: setBarProps,
+  } = useOutletContext<RandomNumberContext>();
   const initialQueryResult = useQuery(GET_RANDOM_NUMBERS, {
     variables: { fetchPolicy: "no-cache", count: 100 },
     onCompleted: (data) => handleQueryCompletion(data),
   });
   const [getRandomNumbers, { loading, error, data }] =
     useLazyQuery(GET_RANDOM_NUMBERS);
-  const [streamProps, setStreamProps] =
-    useState<StreamDataPropsWithAxisLegends>({
-      data: [],
-      keys: [],
-      bottomAxisLegend: "Roll",
-      leftAxisLegend: "Number",
-    });
-  const [lineProps, setLineProps] = useState<LineSvgPropsWithAxisLegends>({
-    data: [],
-    bottomAxisLegend: "Roll",
-    leftAxisLegend: "Number",
-  });
-  const [barProps, setBarProps] = useState<BarDataPropsWithAxisLegends>({
-    data: [],
-    keys: [],
-    indexBy: "index",
-    bottomAxisLegend: "Roll",
-    leftAxisLegend: "Number",
-  });
-  const [activeKey, setActiveKey] = useState<string>("stream");
-  const [rollCount, setRollCount] = useState(0);
 
   if (loading || initialQueryResult.loading) {
     return <Spinner animation="border" variant="secondary" />;
@@ -98,19 +111,19 @@ export default function RandomNumberPane() {
   }
 
   return (
-    <div>
+    <div className="random-number">
       <Button
         variant="primary"
         onClick={handleClick}
         style={{ display: "flex", justifyContent: "left" }}
-        className="mx-3 my-3"
+        className="generate"
       >
         Generate
       </Button>
 
       <VisualizationTabs
-        activeKey={activeKey}
-        setActiveKey={setActiveKey}
+        activeKey={activeVisualization}
+        setActiveKey={setActiveVisualization}
         streamProps={streamProps}
         lineProps={lineProps}
         barProps={barProps}
@@ -118,3 +131,5 @@ export default function RandomNumberPane() {
     </div>
   );
 }
+
+export default RandomNumber;

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -7,11 +7,12 @@ import Badge from "react-bootstrap/Badge";
 import Stack from "react-bootstrap/Stack";
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, useLazyQuery, gql } from "@apollo/client";
-import FilterableDropdown from "./FilterableDropdown";
-import VisualizationTabs from "./VisualizationTabs";
-import { StreamDataPropsWithAxisLegends, StreamDatum } from "./Stream";
-import { LineSvgPropsWithAxisLegends } from "./Line";
-import { BarDataPropsWithAxisLegends } from "./Bar";
+import FilterableDropdown from "../components/FilterableDropdown";
+import VisualizationTabs from "../components/VisualizationTabs";
+import { StreamDataPropsWithAxisLegends } from "../components/Stream";
+import { LineSvgPropsWithAxisLegends } from "../components/Line";
+import { BarDataPropsWithAxisLegends } from "../components/Bar";
+import "./Population.css";
 
 const GET_COUNTRIES = gql`
   query COUNTRIES {
@@ -35,7 +36,28 @@ const GET_COUNTRY_POPULATIONS = gql`
   }
 `;
 
-interface CountryBase {
+export type PopulationContext = {
+  selectedCountries: Country[];
+  setSelectedCountries: React.Dispatch<React.SetStateAction<Country[]>>;
+  activePopulationVisualization: string;
+  setActivePopulationVisualization: React.Dispatch<
+    React.SetStateAction<string>
+  >;
+  populationStreamProps: StreamDataPropsWithAxisLegends;
+  setPopulationStreamProps: React.Dispatch<
+    React.SetStateAction<StreamDataPropsWithAxisLegends>
+  >;
+  populationLineProps: LineSvgPropsWithAxisLegends;
+  setPopulationLineProps: React.Dispatch<
+    React.SetStateAction<LineSvgPropsWithAxisLegends>
+  >;
+  populationBarProps: BarDataPropsWithAxisLegends;
+  setPopulationBarProps: React.Dispatch<
+    React.SetStateAction<BarDataPropsWithAxisLegends>
+  >;
+};
+
+export interface Country {
   code: string;
   name: string;
   emoji: string;
@@ -45,44 +67,37 @@ interface PopulationDatum {
   [count: string]: string | number;
 }
 
-export default function PopulationPane() {
+function Population() {
+  const {
+    selectedCountries,
+    setSelectedCountries,
+    activePopulationVisualization: activeVisualization,
+    setActivePopulationVisualization: setActiveVisualization,
+    populationStreamProps: streamProps,
+    setPopulationStreamProps: setStreamProps,
+    populationLineProps: lineProps,
+    setPopulationLineProps: setLineProps,
+    populationBarProps: barProps,
+    setPopulationBarProps: setBarProps,
+  } = useOutletContext<PopulationContext>();
   const { loading, error, data } = useQuery(GET_COUNTRIES, {
     onCompleted: (data) => {
-      const countries: CountryBase[] = data?.countries;
-      if (countries && countries.length > 0) {
-        const initialCountry =
-          countries[Math.floor(Math.random() * countries.length)];
-        handleCountrySelection(
-          initialCountry.code,
-          initialCountry.name + " " + initialCountry.emoji
-        );
+      if (selectedCountries.length == 0) {
+        const countries: Country[] = data?.countries;
+        if (countries && countries.length > 0) {
+          const initialCountry =
+            countries[Math.floor(Math.random() * countries.length)];
+          handleCountrySelection(
+            initialCountry.code,
+            initialCountry.name + " " + initialCountry.emoji
+          );
+        }
       }
     },
   });
   const [getCountryPopulations, countryPopulationsQueryResult] = useLazyQuery(
     GET_COUNTRY_POPULATIONS
   );
-  const [selectedCountries, setSelectedCountries] = useState<CountryBase[]>([]);
-  const [streamProps, setStreamProps] =
-    useState<StreamDataPropsWithAxisLegends>({
-      data: [],
-      keys: [],
-      bottomAxisLegend: "Year",
-      leftAxisLegend: "Population",
-    });
-  const [lineProps, setLineProps] = useState<LineSvgPropsWithAxisLegends>({
-    data: [],
-    bottomAxisLegend: "Year",
-    leftAxisLegend: "Population",
-  });
-  const [barProps, setBarProps] = useState<BarDataPropsWithAxisLegends>({
-    data: [],
-    keys: [],
-    indexBy: "year",
-    bottomAxisLegend: "Year",
-    leftAxisLegend: "Population",
-  });
-  const [activeKey, setActiveKey] = useState<string>("stream");
 
   if (loading || countryPopulationsQueryResult.loading) {
     return <Spinner animation="border" variant="secondary" />;
@@ -144,8 +159,8 @@ export default function PopulationPane() {
     }
   }
 
-  function removeCountry(country: CountryBase) {
-    setStreamProps((streamProps) => {
+  function removeCountry(country: Country) {
+    setStreamProps((streamProps: StreamDataPropsWithAxisLegends) => {
       streamProps.keys = streamProps.keys.filter(
         (streamKey) => streamKey != country.code
       );
@@ -157,14 +172,14 @@ export default function PopulationPane() {
       return streamProps;
     });
 
-    setLineProps((lineProps) => {
+    setLineProps((lineProps: LineSvgPropsWithAxisLegends) => {
       lineProps.data = lineProps.data.filter(
         (serie) => serie.id != country.name
       );
       return lineProps;
     });
 
-    setBarProps((barProps) => {
+    setBarProps((barProps: BarDataPropsWithAxisLegends) => {
       barProps.keys = barProps.keys?.filter(
         (streamKey) => streamKey != country.name
       );
@@ -182,13 +197,13 @@ export default function PopulationPane() {
   }
 
   return (
-    <div>
+    <div className="population">
       <Container>
         <Row className="pt-3">
           <Col style={{ display: "flex", justifyContent: "left" }}>
             <FilterableDropdown
               buttonTitle="Add a country"
-              items={data?.countries.map((element: CountryBase) => ({
+              items={data?.countries.map((element: Country) => ({
                 key: element.code,
                 value: element.name + " " + element.emoji,
               }))}
@@ -197,15 +212,7 @@ export default function PopulationPane() {
           </Col>
         </Row>
         <Row className="pt-3">
-          <Stack
-            direction="horizontal"
-            gap={2}
-            style={{
-              display: "flex",
-              justifyContent: "left",
-              flexFlow: "row wrap",
-            }}
-          >
+          <Stack direction="horizontal">
             {selectedCountries?.map((element) => (
               <Badge key={element.code} bg="secondary">
                 <div>
@@ -222,8 +229,8 @@ export default function PopulationPane() {
         </Row>
       </Container>
       <VisualizationTabs
-        activeKey={activeKey}
-        setActiveKey={setActiveKey}
+        activeKey={activeVisualization}
+        setActiveKey={setActiveVisualization}
         streamProps={streamProps}
         lineProps={lineProps}
         barProps={barProps}
@@ -231,3 +238,5 @@ export default function PopulationPane() {
     </div>
   );
 }
+
+export default Population;

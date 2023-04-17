@@ -7,6 +7,7 @@ import Bar, { BarDataPropsWithAxisLegends } from "./Bar";
 import { ReactComponent as StreamChartIcon } from "../assets/trending-up.svg";
 import { ReactComponent as LineChartIcon } from "../assets/activity.svg";
 import { ReactComponent as BarChartIcon } from "../assets/bar-chart-2.svg";
+import "./VisualizationTabs.css";
 
 interface VisualizationTabsProps {
   activeKey?: string;
@@ -29,27 +30,15 @@ export default function VisualizationTabs({
       defaultActiveKey="stream"
       activeKey={activeKey}
     >
-      <Row>
+      <Row className="tab-pane">
         <Tab.Content>
-          <Tab.Pane
-            id="stream-tab-pane"
-            eventKey="stream"
-            style={{ height: "500px" }}
-          >
+          <Tab.Pane id="stream-tab-pane" eventKey="stream">
             <Stream {...streamProps} />
           </Tab.Pane>
-          <Tab.Pane
-            id="line-tab-pane"
-            eventKey="line"
-            style={{ height: "500px" }}
-          >
+          <Tab.Pane id="line-tab-pane" eventKey="line">
             <Line {...lineProps} />
           </Tab.Pane>
-          <Tab.Pane
-            id="bar-tab-pane"
-            eventKey="bar"
-            style={{ height: "500px" }}
-          >
+          <Tab.Pane id="bar-tab-pane" eventKey="bar">
             <Bar {...barProps} />
           </Tab.Pane>
         </Tab.Content>
