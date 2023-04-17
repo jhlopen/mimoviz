@@ -6,6 +6,7 @@ import { StreamDataPropsWithAxisLegends } from "./components/Stream";
 import { LineSvgPropsWithAxisLegends } from "./components/Line";
 import { BarDataPropsWithAxisLegends } from "./components/Bar";
 import { Country } from "./pages/Population";
+import { ReactComponent as GitHubIcon } from "./assets/github.svg";
 import "./AppLayout.css";
 
 function AppLayout() {
@@ -65,6 +66,11 @@ function AppLayout() {
           <NavLink to="population">Population</NavLink>
           <NavLink to="random-number">Random Number</NavLink>
         </nav>
+        {import.meta.env.VITE_GITHUB_URL && (
+          <a href={import.meta.env.VITE_GITHUB_URL}>
+            <GitHubIcon />
+          </a>
+        )}
       </header>
       <main>
         <ApolloProvider client={client}>
