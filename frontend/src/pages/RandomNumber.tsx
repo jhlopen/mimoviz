@@ -113,17 +113,16 @@ function RandomNumber() {
   return (
     <div className="random-number">
       <Button
-        variant="primary"
-        onClick={handleClick}
-        style={{ display: "flex", justifyContent: "left" }}
         className="generate"
+        variant="outline-primary"
+        onClick={handleClick}
       >
         Generate
       </Button>
 
       <VisualizationTabs
-        activeKey={activeVisualization}
-        setActiveKey={setActiveVisualization}
+        activeVisualization={activeVisualization}
+        setActiveVisualization={setActiveVisualization}
         streamProps={streamProps}
         lineProps={lineProps}
         barProps={barProps}

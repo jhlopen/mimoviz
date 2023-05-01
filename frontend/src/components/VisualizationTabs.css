@@ -1,8 +1,31 @@
-.tab-pane {
-  flex-grow: 1;
+.visualization-tab-content {
+  flex: 1 1 0;
+  overflow: hidden;
+  padding: 2em;
 }
 
-.tab-pane .tab-content {
+.visualization-tab-item {
   display: flex;
-  min-width: 0;
+  margin: 0.5em;
+  gap: 0.5em;
+}
+
+.visualization-tab-item button {
+  display: flex;
+  gap: 0.2em;
+  color: #999;
+  background-color: unset;
+  padding: 0.3em 0.6em;
+  border: 2px solid #999;
+  border-radius: 8px;
+  transition: box-shadow 0.25s ease-in;
+}
+
+.visualization-tab-item button:hover {
+  box-shadow: 0 0 16px 0 lightblue, 0 0 8px 0 lightblue inset;
+}
+
+.visualization-tab-item button.active {
+  color: white;
+  background-color: #999;
 }

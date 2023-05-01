@@ -4,19 +4,23 @@ import { DropdownMenuProps } from "react-bootstrap/DropdownMenu";
 import Form from "react-bootstrap/Form";
 
 interface FilterableDropdownProps {
+  variant?: string;
   buttonTitle?: string;
   items: { key: string; value: string }[];
   onItemSelection: (key: string, value: string) => void;
 }
 
 export default function FilterableDropdown({
+  variant,
   buttonTitle = "Select an item",
   items,
   onItemSelection,
 }: FilterableDropdownProps) {
   return (
     <Dropdown>
-      <Dropdown.Toggle id="filterable-dropdown">{buttonTitle}</Dropdown.Toggle>
+      <Dropdown.Toggle variant={variant} id="filterable-dropdown">
+        {buttonTitle}
+      </Dropdown.Toggle>
       <Dropdown.Menu
         as={CustomMenu}
         style={{ maxHeight: "500px", overflowY: "scroll" }}

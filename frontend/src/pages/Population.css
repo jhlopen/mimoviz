@@ -1,19 +1,35 @@
 .population {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex: 1 1 0;
+  overflow: hidden;
 }
 
 .population .container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  padding: 0.8em;
   max-width: none;
 }
 
 .population .hstack {
   display: flex;
   justify-content: left;
-  flex-flow: row wrap;
+  flex-wrap: wrap;
 }
 
 .population .hstack .badge {
   margin: 2px;
+  padding: 0.6em;
+}
+
+.country-badge-content {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.country-badge-content .btn-close {
+  font-size: 0.7em;
 }

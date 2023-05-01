@@ -199,26 +199,24 @@ function Population() {
   return (
     <div className="population">
       <Container>
-        <Row className="pt-3">
-          <Col style={{ display: "flex", justifyContent: "left" }}>
-            <FilterableDropdown
-              buttonTitle="Add a country"
-              items={data?.countries.map((element: Country) => ({
-                key: element.code,
-                value: element.name + " " + element.emoji,
-              }))}
-              onItemSelection={handleCountrySelection}
-            />
-          </Col>
+        <Row>
+          <FilterableDropdown
+            variant="outline-primary"
+            buttonTitle="Add a country"
+            items={data?.countries.map((element: Country) => ({
+              key: element.code,
+              value: element.name + " " + element.emoji,
+            }))}
+            onItemSelection={handleCountrySelection}
+          />
         </Row>
-        <Row className="pt-3">
+        <Row>
           <Stack direction="horizontal">
             {selectedCountries?.map((element) => (
               <Badge key={element.code} bg="secondary">
-                <div>
+                <div className="country-badge-content">
                   {element.name + " " + element.emoji}
                   <CloseButton
-                    className="ms-1"
                     variant="white"
                     onClick={() => removeCountry(element)}
                   />
@@ -229,8 +227,8 @@ function Population() {
         </Row>
       </Container>
       <VisualizationTabs
-        activeKey={activeVisualization}
-        setActiveKey={setActiveVisualization}
+        activeVisualization={activeVisualization}
+        setActiveVisualization={setActiveVisualization}
         streamProps={streamProps}
         lineProps={lineProps}
         barProps={barProps}
